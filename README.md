@@ -1,6 +1,6 @@
 # Quiz Explorer
 
-[![CI](https://github.com/justinmartin/quiz-explorer/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/quiz-explorer/actions/workflows/ci.yml)
+[![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
 A Streamlit app to explore a dataset of French general knowledge quiz questions and play with them.
 
