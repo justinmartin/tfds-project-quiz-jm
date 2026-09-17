@@ -2,16 +2,16 @@
 
 [![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
-A Streamlit app to explore and play with more than 3000 general knowledge quiz questions (In French).
+A Streamlit app to explore and play with 3,470 French general knowledge quiz questions.
 
-This serves as the final project for the Tooling for the Data Scientist course, based on a personal project I created for me and my friends [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
+Final project for the *Tooling for the Data Scientist* course, based on my personal project [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
 
-The Docker image is here: [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
+- **Docker image:** [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
 
 ## Features
 
-- **Filters:** theme and difficulty
-- **Explore:** most frequent answers and a searchable table of questions
+- **Filters:** theme, difficulty and dates
+- **Explore:** most frequent answers and keyword search
 - **Play:** answer a random question
 
 ## Quick start
@@ -35,7 +35,7 @@ Then open http://localhost:8501.
 
 ```
 ├── app.py                    Streamlit app
-├── quiz_explorer/data.py     functions to load, filter and check the questions
+├── quiz_explorer/data.py     load, filter and search functions
 ├── tests/test_data.py        unit tests
 ├── data/questions.json       dataset
 ├── pyproject.toml            dependencies and tool settings
