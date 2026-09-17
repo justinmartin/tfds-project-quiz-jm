@@ -2,11 +2,11 @@
 
 [![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
-A Streamlit app to explore and play with 3,470 general knowledge quiz questions (In French).
+A Streamlit app to explore and play with more than 3000 general knowledge quiz questions (In French).
 
 This serves as the final project for the Tooling for the Data Scientist course, based on a personal project I created for me and my friends [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
 
-- The Docker image is here: [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
+The Docker image is here: [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
 
 ## Features
 
