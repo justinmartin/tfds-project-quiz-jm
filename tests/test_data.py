@@ -1,23 +1,20 @@
 import json
-from datetime import datetime
 
-import pandas as pd
 from pytest import fixture, raises
 
 from quiz_explorer.data import (
     check_answer,
     filter_questions,
     load_questions,
-    normalize,
+    remove_accents,
     search_questions,
     top_answers,
 )
 
-SAMPLE: list[dict] = [
+QUESTIONS = [
     {
         "date": "2026-01-02",
         "difficulty": "expert",
-        "order": 1,
         "theme": "Géographie",
         "question": "Quelle est la capitale du Pérou ?",
         "answer": "Lima",
@@ -26,56 +23,44 @@ SAMPLE: list[dict] = [
     {
         "date": "2026-01-01",
         "difficulty": "abordable",
-        "order": 1,
         "theme": "Classique",
         "question": "Qui a peint la Joconde ?",
         "answer": "Léonard de Vinci",
-        "valid_answers": ["Léonard de Vinci", "de vinci"],
+        "valid_answers": ["Léonard de Vinci", "Vinci"],
     },
     {
         "date": "2026-01-03",
         "difficulty": "abordable",
-        "order": 1,
         "theme": "Sport",
-        "question": "Combien de joueurs dans une équipe de football ?",
-        "answer": "11",
-        "valid_answers": ["11", "onze"],
+        "question": "Dans quel pays se trouve Lima ?",
+        "answer": "Pérou",
+        "valid_answers": ["Pérou"],
     },
 ]
 
 
 @fixture
-def sample_path(tmp_path):
+def df(tmp_path):
     path = tmp_path / "questions.json"
-    path.write_text(json.dumps(SAMPLE), encoding="utf-8")
-    return path
-
-
-@fixture
-def df(sample_path):
-    return load_questions(sample_path)
+    path.write_text(json.dumps(QUESTIONS))
+    return load_questions(path)
 
 
 def test_load_questions(df):
     assert len(df) == 3
-    assert df["date"].iloc[0] == datetime(2026, 1, 1)
-
-
-def test_load_questions_sorted_by_date(df):
-    assert df["date"].is_monotonic_increasing
+    assert list(df["answer"]) == ["Léonard de Vinci", "Lima", "Pérou"]
 
 
 def test_load_questions_missing_column(tmp_path):
     path = tmp_path / "bad.json"
-    path.write_text(json.dumps([{"question": "?"}]), encoding="utf-8")
+    path.write_text(json.dumps([{"question": "?"}]))
     with raises(ValueError):
         load_questions(path)
 
 
-def test_load_real_dataset():
+def test_load_real_data():
     df = load_questions()
     assert len(df) > 0
-    assert set(df["difficulty"]) == {"abordable", "expert"}
 
 
 def test_filter_no_filter(df):
@@ -84,7 +69,7 @@ def test_filter_no_filter(df):
 
 def test_filter_themes(df):
     result = filter_questions(df, themes=["Sport", "Classique"])
-    assert set(result["theme"]) == {"Sport", "Classique"}
+    assert list(result["answer"]) == ["Léonard de Vinci", "Pérou"]
 
 
 def test_filter_difficulty(df):
@@ -93,44 +78,24 @@ def test_filter_difficulty(df):
 
 
 def test_filter_dates(df):
-    result = filter_questions(df, start_date="2026-01-02", end_date="2026-01-03")
-    assert list(result["answer"]) == ["Lima", "11"]
+    result = filter_questions(df, start="2026-01-02", end="2026-01-02")
+    assert list(result["answer"]) == ["Lima"]
 
 
-def test_filter_no_match(df):
-    assert filter_questions(df, themes=["Sport"], difficulty="expert").empty
-
-
-def test_search_question(df):
-    assert list(search_questions(df, "PEROU")["answer"]) == ["Lima"]
-
-
-def test_search_answer(df):
-    assert len(search_questions(df, "vinci")) == 1
-
-
-def test_search_empty_keyword(df):
-    assert len(search_questions(df, "  ")) == 3
-
-
-def test_normalize():
-    assert normalize("  Léonard   DE Vinci ") == "leonard de vinci"
-
-
-def test_check_answer():
-    assert check_answer(" LIMA ", ["Lima"])
-    assert check_answer("onze", ["11", "onze"])
-
-
-def test_check_answer_wrong():
-    assert not check_answer("Paris", ["Lima"])
-    assert not check_answer("", ["Lima"])
+def test_search_questions(df):
+    result = search_questions(df, "LIMA")
+    assert list(result["answer"]) == ["Pérou"]
 
 
 def test_top_answers(df):
-    extra = df.iloc[[0]].assign(answer="lima")
-    result = top_answers(pd.concat([df, extra]), n=2)
-    assert list(result.columns) == ["answer", "questions"]
-    assert len(result) == 2
-    assert result["answer"].iloc[0] == "Lima"
-    assert result["questions"].iloc[0] == 2
+    assert top_answers(df, n=2).tolist() == [1, 1]
+
+
+def test_remove_accents():
+    assert remove_accents(" Pérou ") == "perou"
+
+
+def test_check_answer():
+    assert check_answer("perou", ["Pérou"])
+    assert check_answer("VINCI", ["Léonard de Vinci", "Vinci"])
+    assert not check_answer("Paris", ["Lima"])

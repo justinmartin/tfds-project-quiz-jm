@@ -1,117 +1,96 @@
 """
-Loading, filtering and search functions for the quiz questions dataset.
+Functions to load and filter the quiz questions.
 """
 
 import json
 import unicodedata
-from pathlib import Path
 
 import pandas as pd
 
-DATA_PATH: Path = Path(__file__).parent.parent / "data" / "questions.json"
-REQUIRED_COLUMNS: list[str] = ["date", "difficulty", "theme", "question", "answer", "valid_answers"]
+DATA_PATH = "data/questions.json"
+COLUMNS = ["date", "difficulty", "theme", "question", "answer", "valid_answers"]
 
 
-def load_questions(path: Path = DATA_PATH) -> pd.DataFrame:
+def load_questions(path: str = DATA_PATH) -> pd.DataFrame:
     """
     Load the questions from a JSON file.
 
     :param path: path to the JSON file
-    :return: questions sorted by date, with a datetime ``date`` column
+    :return: questions sorted by date
     """
     with open(path, encoding="utf-8") as f:
         df = pd.DataFrame(json.load(f))
 
-    missing = [col for col in REQUIRED_COLUMNS if col not in df.columns]
-    if missing:
-        raise ValueError(f"Missing column(s) in {path}: {missing}")
+    for column in COLUMNS:
+        if column not in df.columns:
+            raise ValueError(f"Column {column} is missing in {path}")
 
     df["date"] = pd.to_datetime(df["date"])
-    return df.sort_values(["date", "difficulty", "order"]).reset_index(drop=True)
+    return df.sort_values("date").reset_index(drop=True)
 
 
-def filter_questions(
-    df: pd.DataFrame,
-    themes: list[str] | None = None,
-    difficulty: str | None = None,
-    start_date=None,
-    end_date=None,
-) -> pd.DataFrame:
+def filter_questions(df: pd.DataFrame, themes=None, difficulty=None, start=None, end=None):
     """
-    Filter the questions. Filters left empty are ignored.
+    Keep the questions matching the filters. Empty filters are ignored.
 
     :param df: questions
-    :param themes: themes to keep
-    :param difficulty: difficulty to keep ("abordable" or "expert")
-    :param start_date: first date to keep (included)
-    :param end_date: last date to keep (included)
+    :param themes: list of themes
+    :param difficulty: "abordable" or "expert"
+    :param start: first date (included)
+    :param end: last date (included)
     :return: filtered questions
     """
     if themes:
         df = df[df["theme"].isin(themes)]
     if difficulty:
         df = df[df["difficulty"] == difficulty]
-    if start_date is not None:
-        df = df[df["date"] >= pd.Timestamp(start_date)]
-    if end_date is not None:
-        df = df[df["date"] <= pd.Timestamp(end_date)]
+    if start:
+        df = df[df["date"] >= pd.Timestamp(start)]
+    if end:
+        df = df[df["date"] <= pd.Timestamp(end)]
     return df
-
-
-def normalize(text: str) -> str:
-    """
-    Lowercase the text and remove accents and extra spaces.
-
-    :param text: text to normalize
-    :return: normalized text
-    """
-    text = unicodedata.normalize("NFKD", str(text))
-    text = "".join(c for c in text if not unicodedata.combining(c))
-    return " ".join(text.lower().split())
 
 
 def search_questions(df: pd.DataFrame, keyword: str) -> pd.DataFrame:
     """
-    Keep the questions whose text or answer contains the keyword.
+    Keep the questions containing the keyword (not case sensitive).
 
     :param df: questions
-    :param keyword: word to look for (case and accents are ignored)
+    :param keyword: word to look for
     :return: matching questions
     """
-    keyword = normalize(keyword)
-    if not keyword:
-        return df
-    in_question = df["question"].map(normalize).str.contains(keyword, regex=False)
-    in_answer = df["answer"].map(normalize).str.contains(keyword, regex=False)
-    return df[in_question | in_answer]
+    return df[df["question"].str.contains(keyword, case=False, regex=False)]
 
 
-def check_answer(user_answer: str, valid_answers: list[str]) -> bool:
+def top_answers(df: pd.DataFrame, n: int = 10) -> pd.Series:
     """
-    Check the user's answer against the accepted answers.
-
-    :param user_answer: answer typed by the user
-    :param valid_answers: accepted answers
-    :return: True if the answer is accepted
-    """
-    guess = normalize(user_answer)
-    return bool(guess) and any(guess == normalize(answer) for answer in valid_answers)
-
-
-def top_answers(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
-    """
-    Find the answers that come up most often.
-
-    Answers are grouped after normalization, so "Brésil" and "bresil" count as one.
+    Count the most frequent answers.
 
     :param df: questions
     :param n: number of answers to keep
-    :return: table with ``answer`` and ``questions`` columns, most common first
+    :return: number of questions for each answer
     """
-    counts = (
-        df.assign(key=df["answer"].map(normalize))
-        .groupby("key")
-        .agg(answer=("answer", "first"), questions=("answer", "size"))
-    )
-    counts = counts.sort_values("questions", ascending=False, kind="stable")
-    return counts.head(n).reset_index(drop=True)
+    return df["answer"].value_counts().head(n)
+
+
+def remove_accents(text: str) -> str:
+    """
+    Lowercase the text and remove its accents.
+
+    :param text: text to clean
+    :return: cleaned text
+    """
+    text = unicodedata.normalize("NFD", text.lower().strip())
+    return "".join(c for c in text if unicodedata.category(c) != "Mn")
+
+
+def check_answer(answer: str, valid_answers: list[str]) -> bool:
+    """
+    Check if the answer is one of the valid answers (ignoring case and accents).
+
+    :param answer: answer given by the user
+    :param valid_answers: accepted answers
+    :return: True if the answer is correct
+    """
+    valid = [remove_accents(v) for v in valid_answers]
+    return remove_accents(answer) in valid

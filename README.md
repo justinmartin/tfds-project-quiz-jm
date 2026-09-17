@@ -22,13 +22,11 @@ With Docker:
 docker run -p 8501:8501 justinmartin16/quiz-explorer
 ```
 
-Or with Python 3.12:
+Or with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-streamlit run app.py
+uv sync
+uv run streamlit run app.py
 ```
 
 Then open http://localhost:8501.
@@ -40,8 +38,8 @@ Then open http://localhost:8501.
 ├── quiz_explorer/data.py     load, filter and search functions
 ├── tests/test_data.py        unit tests
 ├── data/questions.json       dataset
-├── requirements.txt          app dependencies
-├── requirements-dev.txt      test and lint dependencies
+├── pyproject.toml            dependencies and tool settings
+├── uv.lock                   exact dependency versions
 ├── Dockerfile
 └── .github/workflows/ci.yml  CI pipeline
 ```
@@ -53,12 +51,11 @@ Questions from the daily quiz *La Table des Savoirs* (January to July 2026). Eac
 ## Tests
 
 ```bash
-pip install -r requirements-dev.txt
-ruff check .
-ruff format --check .
-python -m pytest --cov=quiz_explorer
+uv run ruff check .
+uv run ruff format --check .
+uv run pytest --cov=quiz_explorer
 ```
 
 ## CI/CD
 
-On every push, GitHub Actions runs the lint and the tests. On `main`, it then builds the Docker image and pushes it to Docker Hub, using the `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets.
+On every push, GitHub Actions installs the dependencies with uv and runs the lint and the tests. On `main`, it then builds the Docker image and pushes it to Docker Hub, using the `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets.
