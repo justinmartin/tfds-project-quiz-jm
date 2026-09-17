@@ -68,7 +68,7 @@ python -m pytest --cov=quiz_explorer
 Run the image from Docker Hub:
 
 ```bash
-docker run -p 8501:8501 <dockerhub-user>/quiz-explorer
+docker run -p 8501:8501 justinmartin16/quiz-explorer
 ```
 
 Or build it locally:
