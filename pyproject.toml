@@ -1,0 +1,14 @@
+[project]
+name = "quiz-explorer"
+version = "1.0.0"
+description = "Streamlit app to explore and play French general knowledge quiz questions"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
