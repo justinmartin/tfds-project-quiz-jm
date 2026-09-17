@@ -10,7 +10,7 @@ This serves as the final project for the Tooling for the Data Scientist course, 
 
 ## Features
 
-- **Filters:** theme, difficulty and dates
+- **Filters:** theme and difficulty
 - **Explore:** most frequent answers and a searchable table of questions
 - **Play:** answer a random question
 
@@ -35,7 +35,7 @@ Then open http://localhost:8501.
 
 ```
 ├── app.py                    Streamlit app
-├── quiz_explorer/data.py     load, filter and search functions
+├── quiz_explorer/data.py     functions to load, filter and check the questions
 ├── tests/test_data.py        unit tests
 ├── data/questions.json       dataset
 ├── pyproject.toml            dependencies and tool settings
