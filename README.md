@@ -2,87 +2,63 @@
 
 [![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
-A Streamlit app to explore a dataset of French general knowledge quiz questions and play with them.
+A Streamlit app to explore and play with 3,470 French general knowledge quiz questions.
 
-This is the final project of the *Tooling for the Data Scientist* course. It is based on one of my personal projects, [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale), a daily quiz web app.
+Final project for the *Tooling for the Data Scientist* course, based on my personal project [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
+
+- **Docker image:** [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
 
 ## Features
 
-- Filter the questions by theme, difficulty and date
-- See the most frequent answers and search the questions (case and accents are ignored)
-- Play: get a random question and check your answer
+- **Filters:** theme, difficulty and dates
+- **Explore:** most frequent answers and a searchable table of questions
+- **Play:** answer a random question
 
-## Data
+## Quick start
 
-`data/questions.json` contains 3,470 questions asked between January and July 2026 on the daily quiz *La Table des Savoirs*.
-
-| Field | Description |
-|---|---|
-| `date` | day the question was asked |
-| `difficulty` | `abordable` (easy) or `expert` |
-| `theme` | one of 10 themes (Sport, Histoire, Sciences...) |
-| `question` / `answer` | question and main answer |
-| `valid_answers` | accepted answers |
-
-## Project structure
-
-```
-├── app.py                  <- Streamlit app
-├── quiz_explorer/data.py   <- loading, filtering and search functions
-├── data/questions.json     <- dataset
-├── tests/test_data.py      <- unit tests
-├── requirements.txt        <- app dependencies
-├── requirements-dev.txt    <- test and lint dependencies
-├── Dockerfile
-└── .github/workflows/ci.yml  <- CI pipeline
-```
-
-## Requirements
-
-Python 3.12.
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements-dev.txt
-```
-
-## Usage
-
-```bash
-streamlit run app.py
-```
-
-Then open http://localhost:8501.
-
-## Tests
-
-```bash
-ruff check .
-ruff format --check .
-python -m pytest --cov=quiz_explorer
-```
-
-## Docker
-
-Run the image from Docker Hub:
+With Docker:
 
 ```bash
 docker run -p 8501:8501 justinmartin16/quiz-explorer
 ```
 
-Or build it locally:
+Or with Python 3.12:
 
 ```bash
-docker build -t quiz-explorer .
-docker run -p 8501:8501 quiz-explorer
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Then open http://localhost:8501.
+
+## Project structure
+
+```
+├── app.py                    Streamlit app
+├── quiz_explorer/data.py     load, filter and search functions
+├── tests/test_data.py        unit tests
+├── data/questions.json       dataset
+├── requirements.txt          app dependencies
+├── requirements-dev.txt      test and lint dependencies
+├── Dockerfile
+└── .github/workflows/ci.yml  CI pipeline
+```
+
+## Data
+
+Questions from the daily quiz *La Table des Savoirs* (January to July 2026). Each question has a `date`, a `difficulty` (`abordable` or `expert`), a `theme`, the `question`, its `answer` and the list of `valid_answers`.
+
+## Tests
+
+```bash
+pip install -r requirements-dev.txt
+ruff check .
+ruff format --check .
+python -m pytest --cov=quiz_explorer
 ```
 
 ## CI/CD
 
-The GitHub Actions workflow runs on every push:
-
-1. **test**: lint, format check and unit tests with coverage
-2. **docker**: build the Docker image and push it to Docker Hub (on `main` only)
-
-The docker job needs two repository secrets in *Settings > Secrets and variables > Actions*: `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN`.
+On every push, GitHub Actions runs the lint and the tests. On `main`, it then builds the Docker image and pushes it to Docker Hub, using the `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets.
