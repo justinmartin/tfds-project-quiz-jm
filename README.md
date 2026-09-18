@@ -1,10 +1,8 @@
-# Quiz Explorer
+# Tools fro Data Science - Final Project
 
 [![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
-A Streamlit app to explore and play with more than 3000 general knowledge quiz questions (in French).
-
-This is my final project for the *Tooling for the Data Scientist* course. It is based on [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale), a quiz app I built for my friends.
+This is a Streamlit app of a personal projet with more than 3000 general knowledge quiz questions (in French) I created last year for me. [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
 
 The Docker image is here: [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
 
@@ -53,10 +51,6 @@ Then open http://localhost:8501.
 └── .github/workflows/ci.yml  CI pipeline
 ```
 
-## Data
-
-Questions from the daily quiz *La Table des Savoirs* (January to July 2026). Each question has a `date`, a `difficulty` (`abordable` or `expert`), a `theme`, the `question`, its `answer` and the list of `valid_answers`.
-
 ## Tests
 
 ```bash
@@ -68,3 +62,7 @@ uv run pytest --cov=quiz_explorer
 ## CI/CD
 
 On every push, GitHub Actions installs the dependencies with uv and runs the lint and the tests. On `main`, it then builds the Docker image and pushes it to Docker Hub, using the `DOCKERHUB_USERNAME` and `DOCKERHUB_TOKEN` repository secrets.
+
+## Data
+
+Questions were extracted from the daily quiz *La Table des Savoirs*. Each question has a `date`, a `difficulty` (`abordable` or `expert`), a `theme`, the `question`, its `answer` and the list of `valid_answers`.
