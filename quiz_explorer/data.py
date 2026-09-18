@@ -8,9 +8,6 @@ DATA_PATH = "data/questions.json"
 def load_questions(path: str = DATA_PATH) -> pd.DataFrame:
     """
     Load the questions from a JSON file.
-
-    :param path: path to the JSON file
-    :return: questions sorted by date
     """
     with open(path, encoding="utf-8") as f:
         df = pd.DataFrame(json.load(f))
@@ -23,11 +20,6 @@ def load_questions(path: str = DATA_PATH) -> pd.DataFrame:
 def filter_questions(df: pd.DataFrame, theme: str, difficulty: str) -> pd.DataFrame:
     """
     Keep the questions of the chosen theme and difficulty ("All" keeps everything).
-
-    :param df: questions
-    :param theme: theme to keep
-    :param difficulty: difficulty to keep
-    :return: filtered questions
     """
     if theme != "All":
         df = df[df["theme"] == theme]
@@ -39,9 +31,5 @@ def filter_questions(df: pd.DataFrame, theme: str, difficulty: str) -> pd.DataFr
 def check_answer(answer: str, valid_answers: list) -> bool:
     """
     Check if the answer is correct.
-
-    :param answer: answer given by the user
-    :param valid_answers: accepted answers
-    :return: True if the answer is correct
     """
     return answer.lower().strip() in [a.lower() for a in valid_answers]
