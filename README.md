@@ -1,8 +1,8 @@
-# Tools fro Data Science - Final Project
+# Tools for Data Science - Final Project
 
 [![CI](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml/badge.svg)](https://github.com/justinmartin/tfds-project-quiz-jm/actions/workflows/ci.yml)
 
-This is a Streamlit app of a personal projet with more than 3000 general knowledge quiz questions (in French) I created last year for me. [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
+This is a Streamlit app of a personal project with more than 3000 general knowledge quiz questions (in French) I created last year for me. Here is my repo [quiz-culture-generale](https://github.com/justinmartin/quiz-culture-generale).
 
 The Docker image is here: [justinmartin16/quiz-explorer](https://hub.docker.com/r/justinmartin16/quiz-explorer)
 
