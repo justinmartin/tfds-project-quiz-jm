@@ -2,7 +2,7 @@ import json
 
 from pytest import fixture, raises
 
-from quiz_explorer.data import check_answer, filter_questions, load_questions, search_questions
+from quiz_explorer.data import check_answer, filter_questions, load_questions
 
 QUESTIONS = [
     {
@@ -57,10 +57,6 @@ def test_filter_theme(df):
 
 def test_filter_difficulty(df):
     assert list(filter_questions(df, "All", "expert")["answer"]) == ["Lima"]
-
-
-def test_search_questions(df):
-    assert list(search_questions(df, "CAPITALE")["answer"]) == ["Lima"]
 
 
 def test_check_answer():

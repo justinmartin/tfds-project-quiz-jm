@@ -36,17 +36,6 @@ def filter_questions(df: pd.DataFrame, theme: str, difficulty: str) -> pd.DataFr
     return df
 
 
-def search_questions(df: pd.DataFrame, keyword: str) -> pd.DataFrame:
-    """
-    Keep the questions containing the keyword.
-
-    :param df: questions
-    :param keyword: word to look for
-    :return: matching questions
-    """
-    return df[df["question"].str.lower().str.contains(keyword.lower(), regex=False)]
-
-
 def check_answer(answer: str, valid_answers: list) -> bool:
     """
     Check if the answer is correct.
